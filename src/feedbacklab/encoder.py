@@ -37,13 +37,20 @@ CONFIG = {
 }
 
 
+def _trim(batch):
+    """Potong padding di luar token terpanjang dalam batch. Hasil model sama (padding sudah
+    di-mask), tetapi di CPU jauh lebih cepat karena ulasan rata-rata hanya sekitar 40 token."""
+    n = int(batch["attention_mask"].sum(dim=1).max())
+    return {k: v[:, :n] for k, v in batch.items()}
+
+
 def _batches(enc, labels, batch_size, shuffle, rng):
     idx = np.arange(len(labels))
     if shuffle:
         rng.shuffle(idx)
     for start in range(0, len(idx), batch_size):
         sel = idx[start : start + batch_size]
-        yield {k: v[sel] for k, v in enc.items()}, labels[sel]
+        yield _trim({k: v[sel] for k, v in enc.items()}), labels[sel]
 
 
 def _predict(model, enc, batch_size, device):
@@ -54,7 +61,8 @@ def _predict(model, enc, batch_size, device):
     with torch.no_grad():
         n = enc["input_ids"].shape[0]
         for start in range(0, n, batch_size):
-            batch = {k: v[start : start + batch_size].to(device) for k, v in enc.items()}
+            batch = _trim({k: v[start : start + batch_size] for k, v in enc.items()})
+            batch = {k: v.to(device) for k, v in batch.items()}
             probs.append(torch.softmax(model(**batch).logits, dim=-1).cpu().numpy())
     return np.concatenate(probs)
 
@@ -127,6 +135,22 @@ def train_one(seed, splits, tokenizer, model_id, revision, config, device):
     }
 
 
+def _runner() -> dict:
+    """Asal eksekusi, supaya hasil tidak bisa diklaim berasal dari tempat lain."""
+    import os
+
+    if os.environ.get("GITHUB_RUN_ID"):
+        return {
+            "platform": "github-actions",
+            "repository": os.environ.get("GITHUB_REPOSITORY"),
+            "run_id": os.environ["GITHUB_RUN_ID"],
+            "sha": os.environ.get("GITHUB_SHA"),
+        }
+    if os.environ.get("KAGGLE_KERNEL_RUN_TYPE"):
+        return {"platform": "kaggle", "run_type": os.environ["KAGGLE_KERNEL_RUN_TYPE"]}
+    return {"platform": "lokal", "host": platform.node()}
+
+
 def run(
     out_path: Path,
     data_dir=None,
@@ -162,6 +186,7 @@ def run(
             "transformers": transformers.__version__,
             "python": platform.python_version(),
             "seconds": round(time.time() - started, 1),
+            "runner": _runner(),
         },
     }
     Path(out_path).parent.mkdir(parents=True, exist_ok=True)
