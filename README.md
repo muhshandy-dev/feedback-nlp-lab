@@ -2,7 +2,7 @@
 
 Analisis sentimen dan topik ulasan berbahasa Indonesia. Baseline TF-IDF + regresi logistik dilatih sungguhan, berjalan langsung di browser, dan dibandingkan dengan encoder IndoBERT pada test set yang sama. Topik ditemukan dengan NMF dan dinilai konsistensinya.
 
-> **Status: belum selesai.** Pembanding encoder IndoBERT sudah punya kode, tes jalur kode, dan notebook Kaggle, tetapi **belum dijalankan** karena bobot model belum bisa diunduh dari lingkungan pembuatan. Situs tidak menampilkan angka IndoBERT apa pun sampai fine-tuning benar-benar dijalankan.
+> **Status: belum selesai.** Pembanding encoder IndoBERT sudah punya kode, tes jalur kode, dan notebook Kaggle, tetapi **belum dijalankan** karena bobot model belum bisa diunduh dari lingkungan pembuatan. Situs tidak menampilkan angka IndoBERT apa pun sampai fine-tuning benar-benar dijalankan. Cara menjalankannya (workflow GitHub Actions **Fine-tune IndoBERT**, notebook Kaggle, atau lokal) ada di [`docs/SERAH_TERIMA.md`](docs/SERAH_TERIMA.md).
 
 ## Hasil saat ini (test set resmi, 400 ulasan)
 
@@ -58,7 +58,7 @@ npm run e2e       # Playwright: 4 lebar layar, terang/gelap, CSP, axe, interaksi
 
 ## Deploy (Cloudflare Pages)
 
-Build command `cd web && npm ci && npm run build`, output `web/dist`. Situs sepenuhnya statis, tidak tidur saat idle. Header keamanan dan cache di [`web/public/_headers`](web/public/_headers).
+Root directory `web`, build command `npm ci && npm run build`, output `dist`, `NODE_VERSION=22`. Langkah lengkap: [`docs/DEPLOY_CLOUDFLARE.md`](docs/DEPLOY_CLOUDFLARE.md). Situs sepenuhnya statis, tidak tidur saat idle. Header keamanan dan cache di [`web/public/_headers`](web/public/_headers).
 
 ## Batas klaim
 
