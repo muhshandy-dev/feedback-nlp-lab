@@ -1,0 +1,13 @@
+{
+  "dataset": "NusaX-Senti (subset bahasa Indonesia)",
+  "repo": "IndoNLP/nusax",
+  "commit": "75b0be5d982348332509f296e10d9bf9cb66d60f",
+  "path": "datasets/sentiment/indonesian",
+  "license": "CC-BY-SA-4.0",
+  "citation": "Winata et al., NusaX: Multilingual Parallel Sentiment Dataset for 10 Indonesian Local Languages, EACL 2023",
+  "files": {
+    "train": "698c4802111085c14fbe35122957e1145338d307bcc295764026a23095a32984",
+    "valid": "4049c4a53017e08db72c72e1907345bfdfc19385481c58f54fe4637073d813f9",
+    "test": "43b612ed6fde972c752ab9fa8b2ce290d9ffa06b176b732fcef2a947cb94a161"
+  }
+}

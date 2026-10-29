@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "feedback-nlp-lab"
+version = "0.1.0"
+description = "Analisis sentimen dan topik ulasan berbahasa Indonesia: TF-IDF vs encoder IndoBERT."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+dependencies = [
+    "numpy>=1.26",
+    "pandas>=2.2",
+    "scikit-learn>=1.5,<1.8",
+    "scipy>=1.11",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "pytest-cov>=5", "ruff>=0.6"]
+# Encoder dijalankan terpisah (Kaggle GPU atau mesin dengan akses bobot Hugging Face).
+encoder = ["torch>=2.3", "transformers>=4.44"]
+
+[project.scripts]
+feedbacklab = "feedbacklab.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+markers = ["realdata: butuh data NusaX asli di data/raw/nusax"]
+
+[tool.ruff]
+line-length = 100
+extend-exclude = ["notebooks"]
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM"]
+ignore = ["SIM905"]
