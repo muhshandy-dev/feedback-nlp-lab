@@ -1,0 +1,140 @@
+/* Antarmuka netral; warna coral dan lilac dipakai untuk data sentimen, bukan dekorasi. */
+:root {
+  --bg: #fbf7f4;
+  --surface: #ffffff;
+  --surface-2: #f4eeea;
+  --ink: #2a2230;
+  --muted: #62586a;
+  --line: #e6ddd7;
+  --focus: #2a2230;
+  --neg: #d9573d;
+  --neg-soft: #fbe3dc;
+  --pos: #8a6cc8;
+  --pos-soft: #ece5f8;
+  --neu: #a49c97;
+  --neu-soft: #eeebe8;
+  --grid: #ece5e0;
+  --shadow: 0 1px 2px rgb(42 34 48 / 6%);
+  --radius: 10px;
+  --font: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --display: 'Fraunces Variable', Georgia, serif;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #16131a;
+    --surface: #201c25;
+    --surface-2: #2a2530;
+    --ink: #efe9f1;
+    --muted: #b3a9b8;
+    --line: #3a3340;
+    --focus: #efe9f1;
+    --neg: #f08a73;
+    --neg-soft: #4a2a25;
+    --pos: #b7a0ec;
+    --pos-soft: #352c49;
+    --neu: #9d9599;
+    --neu-soft: #34303a;
+    --grid: #2f2a35;
+    --shadow: none;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  --bg: #16131a;
+  --surface: #201c25;
+  --surface-2: #2a2530;
+  --ink: #efe9f1;
+  --muted: #b3a9b8;
+  --line: #3a3340;
+  --focus: #efe9f1;
+  --neg: #f08a73;
+  --neg-soft: #4a2a25;
+  --pos: #b7a0ec;
+  --pos-soft: #352c49;
+  --neu: #9d9599;
+  --neu-soft: #34303a;
+  --grid: #2f2a35;
+  --shadow: none;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 400 16px/1.55 var(--font);
+  overflow-x: hidden;
+}
+
+h1, h2, h3 { font-family: var(--display); font-weight: 600; line-height: 1.2; margin: 0; letter-spacing: -0.01em; }
+h1 { font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.3rem); }
+h2 { font-size: clamp(1.25rem, 1.1rem + 0.7vw, 1.6rem); }
+h3 { font-size: 1.08rem; }
+p { margin: 0; }
+a { color: inherit; text-underline-offset: 3px; }
+code { font-size: 0.9em; background: var(--surface-2); padding: 0.05em 0.35em; border-radius: 4px; overflow-wrap: anywhere; }
+
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
+
+.wrap { width: 100%; max-width: 1240px; margin: 0 auto; padding: 0 16px; }
+@media (min-width: 768px) { .wrap { padding: 0 28px; } }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: var(--shadow);
+  min-width: 0;
+}
+
+.muted { color: var(--muted); }
+.small { font-size: 0.875rem; }
+.num { font-variant-numeric: tabular-nums; }
+.stack > * + * { margin-top: 12px; }
+.grid { display: grid; gap: 16px; }
+@media (min-width: 768px) {
+  .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+.badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 0.8rem; font-weight: 500;
+  padding: 2px 9px; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--surface-2); color: var(--ink);
+  white-space: nowrap;
+}
+
+.dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; flex: none; }
+.dot.negative { background: var(--neg); }
+.dot.neutral { background: var(--neu); }
+.dot.positive { background: var(--pos); }
+
+.btn {
+  font: inherit; font-weight: 500; font-size: 0.92rem;
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+  padding: 7px 13px; border-radius: 8px; cursor: pointer; min-height: 38px;
+}
+.btn:hover { background: var(--surface-2); }
+.btn[aria-pressed='true'] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+.table-scroll { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 0.92rem; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 600; color: var(--muted); font-size: 0.82rem; }
+td.r, th.r { text-align: right; }
+caption { text-align: left; color: var(--muted); font-size: 0.85rem; padding-bottom: 6px; caption-side: top; }
+
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}

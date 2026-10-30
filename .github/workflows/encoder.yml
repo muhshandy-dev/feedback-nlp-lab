@@ -1,0 +1,68 @@
+name: Fine-tune IndoBERT
+
+# Dijalankan manual dari tab Actions (Run workflow, setelah workflow ini ada di main), atau dengan
+# mendorong branch bernama encoder-run/... (bisa dipakai sebelum ada di main).
+# Melatih indobenchmark/indobert-base-p1 di CPU runner GitHub (sekitar 1 jam), lalu meng-commit
+# reports/encoder_run.json ke branch yang sama. Evaluasi, uji beda, dan website diperbarui
+# terpisah dengan `feedbacklab run` supaya tetap bisa direproduksi oleh CI biasa.
+
+on:
+  push:
+    branches: ["encoder-run/**"]
+  workflow_dispatch:
+    inputs:
+      epochs:
+        description: "Jumlah epoch (protokol terkunci: 8)"
+        default: "8"
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: encoder-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  finetune:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Pasang (torch CPU)
+        run: |
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install -e ".[encoder]"
+      - name: Unduh dan verifikasi NusaX
+        run: feedbacklab data fetch
+      - name: Fine-tune 3 seed
+        env:
+          EPOCHS: ${{ inputs.epochs || '8' }}
+        run: |
+          [[ "$EPOCHS" =~ ^[0-9]+$ ]] || { echo "epochs harus angka"; exit 1; }
+          feedbacklab encoder --epochs "$EPOCHS"
+      - name: Ringkasan
+        run: |
+          python - <<'PY'
+          import json
+          r = json.load(open("reports/encoder_run.json"))
+          print("seed terpilih:", r["selected_seed"], r["environment"])
+          for x in r["runs"]:
+              print(x["seed"], "epoch", x["best_epoch"], "valid", round(x["valid_macro_f1"], 4),
+                    "test", round(x["test_macro_f1"], 4))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: encoder-run
+          path: reports/encoder_run.json
+          retention-days: 90
+      - name: Commit hasil mentah ke branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/encoder_run.json
+          git commit -m "Hasil fine-tune IndoBERT (run ${{ github.run_id }})"
+          git push
