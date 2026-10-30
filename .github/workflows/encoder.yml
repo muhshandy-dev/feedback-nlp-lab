@@ -9,7 +9,6 @@ name: Fine-tune IndoBERT
 on:
   push:
     branches: ["encoder-run/**"]
-    paths-ignore: ["reports/encoder_run.json"]
   workflow_dispatch:
     inputs:
       epochs:
