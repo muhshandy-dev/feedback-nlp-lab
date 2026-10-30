@@ -2,17 +2,19 @@
 
 Analisis sentimen dan topik ulasan berbahasa Indonesia. Baseline TF-IDF + regresi logistik dilatih sungguhan, berjalan langsung di browser, dan dibandingkan dengan encoder IndoBERT pada test set yang sama. Topik ditemukan dengan NMF dan dinilai konsistensinya.
 
-> **Status: belum selesai.** Pembanding encoder IndoBERT sudah punya kode, tes jalur kode, dan notebook Kaggle, tetapi **belum dijalankan** karena bobot model belum bisa diunduh dari lingkungan pembuatan. Situs tidak menampilkan angka IndoBERT apa pun sampai fine-tuning benar-benar dijalankan. Cara menjalankannya (workflow GitHub Actions **Fine-tune IndoBERT**, notebook Kaggle, atau lokal) ada di [`docs/SERAH_TERIMA.md`](docs/SERAH_TERIMA.md).
+> **Status: model dan evaluasi lengkap, situs belum dideploy.** IndoBERT sudah di-fine-tune sungguhan (GitHub Actions run [41083480509](https://github.com/muhshandy-dev/feedback-nlp-lab/actions/runs/41083480509), CPU, 3 seed) dan dievaluasi pada test set yang sama dengan TF-IDF. Fine-tuning dijalankan di GitHub Actions, bukan di Kaggle; notebook Kaggle tersedia tetapi belum dijalankan. Situs live belum diverifikasi.
 
-## Hasil saat ini (test set resmi, 400 ulasan)
+## Hasil (test set resmi, 400 ulasan)
 
 | Model | Macro-F1 | 95% CI (bootstrap 2.000) | Akurasi |
 |---|---|---|---|
 | Kelas mayoritas (selalu "negatif") | 0,184 | 0,167 sampai 0,200 | 38,3% |
 | TF-IDF n-gram karakter 2-5 + regresi logistik (C = 5) | **0,772** | 0,729 sampai 0,813 | 78,0% |
-| IndoBERT base, fine-tuned | belum dijalankan | | |
+| IndoBERT base, fine-tuned (seed 33, dipilih dengan validasi) | **0,900** | 0,868 sampai 0,929 | 90,8% |
 
-F1 per kelas TF-IDF: negatif 0,747, netral 0,711, positif 0,859. Kesalahan terbanyak: negatif ditebak netral (25) dan netral ditebak negatif (21).
+IndoBERT dibanding TF-IDF: selisih macro-F1 +0,127 (95% CI bootstrap berpasangan 0,086 sampai 0,168). McNemar: 60 ulasan hanya benar di IndoBERT, 9 hanya benar di TF-IDF, p < 0,001. Skor uji tiga seed IndoBERT 0,888, 0,879, 0,900; semuanya di atas TF-IDF.
+
+F1 per kelas: TF-IDF negatif 0,747, netral 0,711, positif 0,859; IndoBERT negatif 0,919, netral 0,845, positif 0,935. Kelas netral tetap paling sulit untuk kedua model.
 
 Topik (NMF, k = 4 dipilih dengan aturan yang dikunci): NPMI held-out −0,078 (topik acak −0,912), stabilitas antar 5 seed 1,000, keragaman kata 93%. Satu dari empat topik (NPMI −0,76) ditandai sebagai campuran di situs.
 
@@ -63,7 +65,9 @@ Root directory `web`, build command `npm ci && npm run build`, output `dist`, `N
 ## Batas klaim
 
 - Korpus kecil (1.000 ulasan) dan campuran domain (restoran, wisata, operator seluler, bank, isu publik). Angka tidak berlaku untuk ulasan e-commerce tanpa diuji ulang. PRDECT-ID (5.400 ulasan Tokopedia) direncanakan tetapi belum bisa diunduh dari lingkungan pembuatan.
-- Hasil Kaggle tidak diklaim sebelum notebook benar-benar dijalankan.
+- IndoBERT dilatih di runner CPU GitHub Actions (38 menit untuk 3 seed), bukan Kaggle. Hasil Kaggle tidak diklaim. Pelatihan ulang di perangkat lain bisa menghasilkan angka sedikit berbeda; angka yang dipublikasikan berasal dari `reports/encoder_run.json` hasil run itu, dan evaluasinya dapat direproduksi persis.
+- Bobot pra-latih IndoBERT dilatih pada korpus web Indonesia yang besar; kemungkinan sebagian teks ulasan pernah muncul di sana (tanpa label) tidak bisa disingkirkan.
+- Website hanya menjalankan TF-IDF di browser. Prediksi IndoBERT untuk 400 ulasan uji ditampilkan sebagai hasil precomputed berlabel.
 - Model card: [`docs/kartu-model.md`](docs/kartu-model.md).
 
 ## Lisensi

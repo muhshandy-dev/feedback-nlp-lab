@@ -1,5 +1,5 @@
 <script>
-  import { LABEL_ID, int } from '../lib/format.js';
+  import { LABEL_ID, dec, int } from '../lib/format.js';
 
   let { data } = $props();
   const r = $derived(data.results);
@@ -53,7 +53,11 @@
       <li>Hanya bahasa Indonesia; NusaX juga berisi bahasa daerah yang tidak dipakai di sini.</li>
       <li>Kata kunci per sentimen bersifat deskriptif (log-odds dengan prior Dirichlet di seluruh korpus), bukan bukti sebab.</li>
       <li>Topik dengan NPMI rendah ditandai sebagai campuran.</li>
-      {#if enc.status !== 'dijalankan'}
+      {#if enc.status === 'dijalankan'}
+        <li>IndoBERT di-fine-tune satu kali (3 seed) di runner CPU GitHub Actions, bukan di Kaggle. Skor uji antar seed {enc.seeds.map((s) => dec(s.test_macro_f1)).join(', ')}; {enc.seeds.every((s) => s.test_macro_f1 > r.tfidf.test.macro_f1) ? 'semuanya di atas TF-IDF' : 'tidak semuanya di atas TF-IDF'}, tetapi angka utama adalah satu seed yang dipilih dengan validasi.</li>
+        <li>Bobot pra-latih IndoBERT dilatih pada korpus web Indonesia yang besar. Kemungkinan sebagian teks ulasan pernah muncul di korpus itu (tanpa label) tidak bisa disingkirkan sepenuhnya.</li>
+        <li>Tab Uji kalimat hanya menjalankan TF-IDF secara langsung. Prediksi IndoBERT tersedia untuk 400 ulasan uji sebagai hasil precomputed.</li>
+      {:else}
         <li><strong>Pembanding encoder belum dijalankan.</strong> Kode dan notebook Kaggle sudah ada, tetapi bobot IndoBERT belum bisa diunduh dari lingkungan pembuatan. Proyek belum memenuhi kriteria "TF-IDF vs encoder" sampai bagian ini selesai.</li>
       {/if}
     </ul>

@@ -574,8 +574,442 @@
   ]
  },
  "encoder": {
-  "status": "belum_dijalankan",
-  "reason": "Bobot IndoBERT belum bisa diunduh dari lingkungan pembuatan. Kode fine-tuning dan notebook Kaggle sudah siap; angka akan muncul setelah benar-benar dijalankan."
+  "status": "dijalankan",
+  "model_id": "indobenchmark/indobert-base-p1",
+  "revision": "c2cd0b51ddce6580eb35263b39b0a1e5fb0a39e2",
+  "config": {
+   "max_length": 128,
+   "batch_size": 16,
+   "learning_rate": 2e-05,
+   "weight_decay": 0.01,
+   "epochs": 8,
+   "warmup_ratio": 0.1
+  },
+  "environment": {
+   "device": "cpu",
+   "gpu": null,
+   "torch": "2.15.0+cpu",
+   "transformers": "5.22.1",
+   "python": "3.12.15",
+   "seconds": 2304.3,
+   "runner": {
+    "platform": "github-actions",
+    "repository": "muhshandy-dev/feedback-nlp-lab",
+    "run_id": "41083480509",
+    "sha": "9afa81beb98e2a5ba0fa52045bf78e437f0a5b82"
+   }
+  },
+  "selected_seed": 33,
+  "seeds": [
+   {
+    "seed": 11,
+    "best_epoch": 5,
+    "valid_macro_f1": 0.907852,
+    "test_macro_f1": 0.888371,
+    "curve": [
+     {
+      "epoch": 1,
+      "train_loss": 0.911116,
+      "valid_macro_f1": 0.842235
+     },
+     {
+      "epoch": 2,
+      "train_loss": 0.348898,
+      "valid_macro_f1": 0.881094
+     },
+     {
+      "epoch": 3,
+      "train_loss": 0.154705,
+      "valid_macro_f1": 0.899671
+     },
+     {
+      "epoch": 4,
+      "train_loss": 0.062981,
+      "valid_macro_f1": 0.89715
+     },
+     {
+      "epoch": 5,
+      "train_loss": 0.019144,
+      "valid_macro_f1": 0.907852
+     },
+     {
+      "epoch": 6,
+      "train_loss": 0.003074,
+      "valid_macro_f1": 0.897885
+     },
+     {
+      "epoch": 7,
+      "train_loss": 0.002103,
+      "valid_macro_f1": 0.897885
+     },
+     {
+      "epoch": 8,
+      "train_loss": 0.001881,
+      "valid_macro_f1": 0.897885
+     }
+    ]
+   },
+   {
+    "seed": 22,
+    "best_epoch": 2,
+    "valid_macro_f1": 0.92584,
+    "test_macro_f1": 0.879004,
+    "curve": [
+     {
+      "epoch": 1,
+      "train_loss": 0.871638,
+      "valid_macro_f1": 0.86934
+     },
+     {
+      "epoch": 2,
+      "train_loss": 0.320374,
+      "valid_macro_f1": 0.92584
+     },
+     {
+      "epoch": 3,
+      "train_loss": 0.116289,
+      "valid_macro_f1": 0.876435
+     },
+     {
+      "epoch": 4,
+      "train_loss": 0.055291,
+      "valid_macro_f1": 0.873836
+     },
+     {
+      "epoch": 5,
+      "train_loss": 0.017511,
+      "valid_macro_f1": 0.893622
+     },
+     {
+      "epoch": 6,
+      "train_loss": 0.004993,
+      "valid_macro_f1": 0.875774
+     },
+     {
+      "epoch": 7,
+      "train_loss": 0.002129,
+      "valid_macro_f1": 0.895071
+     },
+     {
+      "epoch": 8,
+      "train_loss": 0.001823,
+      "valid_macro_f1": 0.895071
+     }
+    ]
+   },
+   {
+    "seed": 33,
+    "best_epoch": 4,
+    "valid_macro_f1": 0.926323,
+    "test_macro_f1": 0.899608,
+    "curve": [
+     {
+      "epoch": 1,
+      "train_loss": 0.838065,
+      "valid_macro_f1": 0.865253
+     },
+     {
+      "epoch": 2,
+      "train_loss": 0.263529,
+      "valid_macro_f1": 0.904327
+     },
+     {
+      "epoch": 3,
+      "train_loss": 0.106958,
+      "valid_macro_f1": 0.90406
+     },
+     {
+      "epoch": 4,
+      "train_loss": 0.031215,
+      "valid_macro_f1": 0.926323
+     },
+     {
+      "epoch": 5,
+      "train_loss": 0.014447,
+      "valid_macro_f1": 0.906667
+     },
+     {
+      "epoch": 6,
+      "train_loss": 0.007922,
+      "valid_macro_f1": 0.915429
+     },
+     {
+      "epoch": 7,
+      "train_loss": 0.001858,
+      "valid_macro_f1": 0.917448
+     },
+     {
+      "epoch": 8,
+      "train_loss": 0.001685,
+      "valid_macro_f1": 0.917448
+     }
+    ]
+   }
+  ],
+  "test": {
+   "n": 400,
+   "macro_f1": 0.899608,
+   "macro_f1_ci95": [
+    0.867744,
+    0.929244
+   ],
+   "accuracy": 0.9075,
+   "per_class": {
+    "negative": {
+     "precision": 0.88024,
+     "recall": 0.960784,
+     "f1": 0.91875,
+     "support": 153
+    },
+    "neutral": {
+     "precision": 0.868132,
+     "recall": 0.822917,
+     "f1": 0.84492,
+     "support": 96
+    },
+    "positive": {
+     "precision": 0.964789,
+     "recall": 0.907285,
+     "f1": 0.935154,
+     "support": 151
+    }
+   },
+   "confusion": [
+    [
+     147,
+     6,
+     0
+    ],
+    [
+     12,
+     79,
+     5
+    ],
+    [
+     8,
+     6,
+     137
+    ]
+   ]
+  },
+  "vs_tfidf": {
+   "delta_macro_f1": 0.127223,
+   "delta_ci95": [
+    0.086096,
+    0.167757
+   ],
+   "p_b_not_better": 0.0,
+   "mcnemar": {
+    "only_a_correct": 9,
+    "only_b_correct": 60,
+    "p_value": 0.0
+   }
+  },
+  "errors": [
+   {
+    "id": 618,
+    "text": "Saya kapok menggunakan jasa lion air",
+    "label": "negative",
+    "pred": "neutral",
+    "conf": 0.988016
+   },
+   {
+    "id": 517,
+    "text": "Hasil quick count dinyatakan berbeda dengan hasil survei membuat saya bertanya-tanya.",
+    "label": "negative",
+    "pred": "neutral",
+    "conf": 0.984965
+   },
+   {
+    "id": 12,
+    "text": "Saya sudah registrasi tapi tidak dapat sms dari 5111.",
+    "label": "negative",
+    "pred": "neutral",
+    "conf": 0.979794
+   },
+   {
+    "id": 786,
+    "text": "Minimal biaya transaksi bulan 11 yang harusnya direfund bulan 12 kemarin tidak masuk ke rekening saya nih.",
+    "label": "negative",
+    "pred": "neutral",
+    "conf": 0.958973
+   },
+   {
+    "id": 164,
+    "text": "Oke bos, walau handphone tiba-tiba ngehank sendiri selama sehari",
+    "label": "negative",
+    "pred": "neutral",
+    "conf": 0.95749
+   },
+   {
+    "id": 541,
+    "text": "Saya melakukan 5 transaksi pada tanggal 22 juni, smuanya decline nyatanya terdebit dari rekening hampir 7 juta, dari 5 transaksi baru 3 transaksi yang dikembalikan.",
+    "label": "negative",
+    "pred": "neutral",
+    "conf": 0.726497
+   },
+   {
+    "id": 34,
+    "text": "Minimal internet saya putus tiba-tiba, 1 rumah pakai simpati semua begitu juga tidak bisa connect internet",
+    "label": "neutral",
+    "pred": "negative",
+    "conf": 0.99585
+   },
+   {
+    "id": 638,
+    "text": "Baru tahu tentang tempat ini dari teman, waktu kami datang pengunjungnya tidak terlalu banyak, jadi kami memilih untuk duduk di lantai dua sambil menikmati pemandangan di luar. Malam itu sedang ada pertunjukan musik, saya kurang tahu apakah pertunjukan musik ini ada tiap hari atau tidak.",
+    "label": "neutral",
+    "pred": "negative",
+    "conf": 0.982461
+   },
+   {
+    "id": 890,
+    "text": "Kemampuan memahami bacaan tiap orang itu beda-beda, ada yang sekali baca sudah paham, ada juga yang butuh berkali-kali baca dulu baru paham.",
+    "label": "neutral",
+    "pred": "negative",
+    "conf": 0.959238
+   },
+   {
+    "id": 512,
+    "text": "Pagi ini lupa lepas helm abang gojek setelah turun dari motor gara-gara mengejar bus",
+    "label": "neutral",
+    "pred": "negative",
+    "conf": 0.925635
+   },
+   {
+    "id": 499,
+    "text": "Gunakan kunci duplikat, bank bri di pusat kota dibobol maling, uang rp 1 miliar lenyap.",
+    "label": "neutral",
+    "pred": "negative",
+    "conf": 0.920464
+   },
+   {
+    "id": 860,
+    "text": "Di indonesia pilihan merek telepon seluler kan melimpah. Kalau tidak suka cara xiaomi menjalankan bisnisnya ya tinggal pilih merek lain. Dibawa santai saja.",
+    "label": "neutral",
+    "pred": "negative",
+    "conf": 0.910392
+   },
+   {
+    "id": 442,
+    "text": "Nasi uduk ini ada di jalan rajiman dan bukanya dari sore sampai malam. Menunya sih cukup sederhana, hanya nasi uduk dan berbagai pelengkapnya. Biasanya saya makan nasi uduk sama ayam goreng dan sambal, sambalnya tidak terlalu pedas.",
+    "label": "neutral",
+    "pred": "positive",
+    "conf": 0.99357
+   },
+   {
+    "id": 979,
+    "text": "Akses menuju dusun bambu bisa ditempuh kira-kira dalam waktu 1 - 2 jam menggunakan mobil pribadi. Berkunjung ke dusun bambu diusahakan saat petang hari karena kita dapat melihat jelas pemandangan yang ada dan waktu yang pas untuk makan malam.",
+    "label": "neutral",
+    "pred": "positive",
+    "conf": 0.992575
+   },
+   {
+    "id": 9,
+    "text": "Saya bersama keluarga makan malam di tempat ini karena selain menu utama batagor terdapat menu lain. Saya hanya memesan 2 menu yang akhirnya datang setelah 45 menit, itu pun setelah beberapa kali saya tanyakan. Dari segi rasa beberapa menu yang sebelumnya pernah saya coba lumayan enak. Saran sebelum memesan lebih baik tanyakan berapa lama pembuatan menu yang dipesan",
+    "label": "neutral",
+    "pred": "positive",
+    "conf": 0.991695
+   },
+   {
+    "id": 998,
+    "text": "Tidur yang cukup tiap harinya bisa bikin badan tidak kecapekan dan segar ketika bangun di pagi hari.",
+    "label": "neutral",
+    "pred": "positive",
+    "conf": 0.991311
+   },
+   {
+    "id": 818,
+    "text": "Untuk daerah banda aceh dan sekitarnya masih lancar, tidak ada gangguan sama sekali.",
+    "label": "neutral",
+    "pred": "positive",
+    "conf": 0.500579
+   },
+   {
+    "id": 113,
+    "text": "Saya termasuk salah satu orang yang cukup setia dengan kampung daun dari awal buka di tahun 2003 kalau tidak salah, kualitas makanan awalnya oke, tapi semenjak makin ramai dan makin ke sini, makanan yang disajikan tidak seperti biasanya dan terkadang pelayan terkesan cuek sekali, kita mesan beberapa jenis makanan tapi yang datang sudah dengan kondisi dingin dan tidak menarik, tempat menarik.",
+    "label": "positive",
+    "pred": "negative",
+    "conf": 0.995766
+   },
+   {
+    "id": 70,
+    "text": "Malam sekitar jam tujuan diajak klien ke tempat makan ini, over all sih makanannya lebih banyak yang di goreng-goreng begitu kayak ayam, babat, usus, ati ampela, tapi menurut saya sih rasanya biasa saja, dan minyaknya di makanan terlalu banyak. Tapi variannya cukup banyak:",
+    "label": "positive",
+    "pred": "negative",
+    "conf": 0.993651
+   },
+   {
+    "id": 86,
+    "text": "Enak lumayan, tapi harganya mahal karena porsinya sedikit kecil. Ada pilihan infused kangen water yang cukup untuk 4 orang",
+    "label": "positive",
+    "pred": "negative",
+    "conf": 0.987635
+   },
+   {
+    "id": 708,
+    "text": "Warung makan yang telah hadir sejak lama dan telah menjadi semacam legenda, mungkin sekarang sudah buka cabang. Terkenal karena konsistensi rasa -nya selama bertahun-tahun, meskipun bangunan asli telah dipugar tetapi keaslian masih tetap dijaga dan tetap susah parkir. Beberapa waktu terakhir ada sedikit perubahan ketika ibu chef utama sudah tidak terlihat lagi.",
+    "label": "positive",
+    "pred": "negative",
+    "conf": 0.985947
+   },
+   {
+    "id": 945,
+    "text": "Salah satu restoran seafood terbaik di kota ini. Sebaiknya datang pas liburan hari sabtu, kepiting masih bagus baru datang. Harga bersaing, tidak murah memang tapi tidak kemahalan kok.",
+    "label": "positive",
+    "pred": "negative",
+    "conf": 0.983929
+   },
+   {
+    "id": 244,
+    "text": "Nasi goreng mafia yang terletak di jalan setiabudi kami pilih karena ingin mencari makanan yang cepat. Ditambah merupakan salah satu kuliner yang wajib dikunjungi di bandung. Saya memilih nasi goreng yang favorit di sini yaitu nasi goreng bandit hingga tingkat kepedasan di level 3. Makanan yang disajikan cukup cepat, namun sayangnya nasi goreng yang saya pesan nasinya keras, bumbu rempahnya tertutupi.",
+    "label": "positive",
+    "pred": "negative",
+    "conf": 0.965777
+   },
+   {
+    "id": 74,
+    "text": "Ini adalah sop stengkel terenak di aceh tamiang.",
+    "label": "positive",
+    "pred": "neutral",
+    "conf": 0.99681
+   },
+   {
+    "id": 271,
+    "text": "Saat rapat di hotel sensa, saya memesan batagor riri menggunakan aplikasi gofood / gojek. Pesanan tiba dalam waktu tidak lama karena ternyata paket batagor dan siomay sudah di-pack dalam plastik vakum. Harga yang tertera dalam aplikasi gojek / gojek belum termasuk pajak sebesar 10%.",
+    "label": "positive",
+    "pred": "neutral",
+    "conf": 0.989557
+   },
+   {
+    "id": 33,
+    "text": "Mumpung sedang berjalan-jalan ke bandunh sekalian menyempatkan mencoba batagor yang terenak di kota kembang ini sampai tidak sadar kami memesan lebih banyak dari kapasitas makan kami berdua: Bakso tahu goreng, siomay goreng dan batagor kuah, ayam kremes, dan es cendol dan kami masih harus membungkus pulang tahu yun yin pesanan kami akhirnya.",
+    "label": "positive",
+    "pred": "neutral",
+    "conf": 0.94676
+   },
+   {
+    "id": 988,
+    "text": "Kaskus memang sering memberikan informasi yang menarik dan terbaru",
+    "label": "positive",
+    "pred": "neutral",
+    "conf": 0.909302
+   },
+   {
+    "id": 59,
+    "text": "Restoran alas daun menyajikan menu khas sunda yang tidak jauh berbeda dengan restoran khas sunda lainnya, tapi yang membuatnya berbeda adalah tanpa piring, dan hanya diberi daun pisang yang diletakkan di meja sebagai pengganti piring. Jadi mirip orang di india yang makan beralaskan daun pisang.",
+    "label": "positive",
+    "pred": "neutral",
+    "conf": 0.787103
+   },
+   {
+    "id": 573,
+    "text": "Kfc Palembang Square seringkali menjadi penyelamat di saat lapar saat saya menginap di sekitaran hotel di lokasi itu. Semua orang suka kfc. So. Kfc di lokasi ini menyegerakan anda untuk memesan saat anda kelaparan di dalam hotel.",
+    "label": "positive",
+    "pred": "neutral",
+    "conf": 0.694457
+   }
+  ]
  },
  "topics": {
   "method": "NMF di atas TF-IDF kata (kata henti dibuang), dilatih pada train+valid",

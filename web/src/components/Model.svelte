@@ -139,7 +139,7 @@
     <p class="small">TF-IDF dibanding kelas mayoritas: selisih macro-F1 <strong class="num">{dec(r.tfidf.vs_majority.delta_macro_f1)}</strong> (95% CI {ci(r.tfidf.vs_majority.delta_ci95)}).</p>
     {#if hasEnc}
       {@const v = enc.vs_tfidf}
-      <p class="small">IndoBERT dibanding TF-IDF: selisih <strong class="num">{dec(v.delta_macro_f1)}</strong> (95% CI {ci(v.delta_ci95)}). McNemar: {v.mcnemar.only_b_correct} ulasan hanya benar di IndoBERT, {v.mcnemar.only_a_correct} hanya benar di TF-IDF, p = {dec(v.mcnemar.p_value, 4)}.</p>
+      <p class="small">IndoBERT dibanding TF-IDF: selisih <strong class="num">{dec(v.delta_macro_f1)}</strong> (95% CI {ci(v.delta_ci95)}). McNemar: {v.mcnemar.only_b_correct} ulasan hanya benar di IndoBERT, {v.mcnemar.only_a_correct} hanya benar di TF-IDF, {v.mcnemar.p_value < 0.001 ? 'p < 0,001' : `p = ${dec(v.mcnemar.p_value, 3)}`}.</p>
       <p class="small muted">{v.delta_ci95[0] > 0 ? 'Interval tidak memuat nol: IndoBERT lebih baik secara meyakinkan pada test set ini.' : 'Interval memuat nol: belum ada bukti IndoBERT lebih baik pada test set ini.'}</p>
     {:else}
       <p class="small muted">Uji beda IndoBERT vs TF-IDF (bootstrap berpasangan dan McNemar) sudah disiapkan dan akan terisi otomatis begitu fine-tuning dijalankan.</p>
@@ -156,7 +156,7 @@
   <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
   <section class="card table-scroll" tabindex="0" aria-label="Tabel, bisa digeser">
     <table>
-      <caption>Fine-tuning IndoBERT per seed ({enc.environment.device}{enc.environment.gpu ? `, ${enc.environment.gpu}` : ''}). Seed terpilih berdasarkan validasi: {enc.selected_seed}.</caption>
+      <caption>Fine-tuning IndoBERT per seed ({enc.environment.device === 'cpu' ? 'CPU' : enc.environment.device}{enc.environment.gpu ? `, ${enc.environment.gpu}` : ''}{enc.environment.runner?.platform === 'github-actions' ? `, GitHub Actions run ${enc.environment.runner.run_id}` : ''}, {int(Math.round(enc.environment.seconds / 60))} menit untuk 3 seed). Seed terpilih berdasarkan validasi: {enc.selected_seed}. Skor uji semua seed ditampilkan supaya variasinya terlihat.</caption>
       <thead><tr><th>Seed</th><th class="r">Epoch terbaik</th><th class="r">Macro-F1 validasi</th><th class="r">Macro-F1 uji</th></tr></thead>
       <tbody>{#each enc.seeds as s}<tr><td>{s.seed}</td><td class="r num">{s.best_epoch}</td><td class="r num">{dec(s.valid_macro_f1)}</td><td class="r num">{dec(s.test_macro_f1)}</td></tr>{/each}</tbody>
     </table>

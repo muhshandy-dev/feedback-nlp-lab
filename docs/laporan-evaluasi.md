@@ -1,6 +1,6 @@
 # Laporan evaluasi Feedback NLP Lab
 
-Tanggal: 29 Oktober 2026. Semua angka dari `reports/results.json`, dihasilkan oleh `feedbacklab run` dan diperiksa ulang secara independen oleh `tools/verify_published.py`.
+Tanggal: 29 Oktober 2026, diperbarui 30 Oktober 2026 dengan hasil IndoBERT. Semua angka dari `reports/results.json`, dihasilkan oleh `feedbacklab run` dan diperiksa ulang secara independen oleh `tools/verify_published.py`.
 
 ## 1. Klasifikasi sentimen (test resmi, 400 ulasan)
 
@@ -8,17 +8,32 @@ Tanggal: 29 Oktober 2026. Semua angka dari `reports/results.json`, dihasilkan ol
 |---|---|---|---|---|---|---|
 | Kelas mayoritas | 0,184 | 0,167 sampai 0,200 | 38,3% | 0,553 | 0,000 | 0,000 |
 | TF-IDF karakter 2-5 + LR (C = 5) | 0,772 | 0,729 sampai 0,813 | 78,0% | 0,747 | 0,711 | 0,859 |
-| IndoBERT base fine-tuned | belum dijalankan | | | | | |
+| IndoBERT base fine-tuned (seed 33) | **0,900** | 0,868 sampai 0,929 | 90,8% | 0,919 | 0,845 | 0,935 |
 
 TF-IDF dibanding kelas mayoritas: selisih macro-F1 +0,588 (95% CI bootstrap berpasangan 0,541 sampai 0,634); McNemar 197 ulasan hanya benar di TF-IDF vs 38 hanya benar di mayoritas, p < 0,001.
 
-Confusion matrix TF-IDF (baris = asli, kolom = prediksi; negatif, netral, positif):
+IndoBERT dibanding TF-IDF: selisih macro-F1 **+0,127** (95% CI bootstrap berpasangan 0,086 sampai 0,168, tidak memuat nol); McNemar 60 ulasan hanya benar di IndoBERT vs 9 hanya benar di TF-IDF, p < 0,001. IndoBERT lebih baik secara meyakinkan pada test set ini.
+
+Confusion matrix (baris = asli, kolom = prediksi; negatif, netral, positif):
 
 ```
-negatif  115  25  13
-netral    21  69   6
-positif   19   4 128
+             TF-IDF            IndoBERT
+negatif  115  25  13       147   6   0
+netral    21  69   6        12  79   5
+positif   19   4 128         8   6 137
 ```
+
+### Fine-tuning IndoBERT
+
+Dijalankan di GitHub Actions run [41083480509](https://github.com/muhshandy-dev/feedback-nlp-lab/actions/runs/41083480509), runner CPU, 38 menit untuk 3 seed (torch 2.15.0, transformers 5.22.1). Bukan di Kaggle: Kaggle dan CDN bobot Hugging Face tidak bisa dijangkau dari lingkungan pembuatan, sedangkan runner GitHub bisa. Model, revisi, data, konfigurasi, dan aturan pemilihan sama persis dengan protokol yang dikunci sebelumnya; hanya tempat menjalankannya yang berbeda.
+
+| Seed | Epoch terbaik | Macro-F1 validasi | Macro-F1 uji |
+|---|---|---|---|
+| 11 | 5 | 0,908 | 0,888 |
+| 22 | 2 | 0,926 | 0,879 |
+| **33 (terpilih)** | 4 | 0,926 | 0,900 |
+
+Seed 33 dipilih karena validasinya tertinggi (0,92632 vs 0,92584 untuk seed 22, selisih yang praktis sama). Skor uji seed lain 0,879 sampai 0,888, jadi angka 0,900 sedikit beruntung, tetapi ketiga seed tetap jauh di atas TF-IDF (0,772).
 
 ### Pemilihan hyperparameter
 
@@ -35,7 +50,17 @@ Tiga jenis fitur hampir setara di CV (kata 1-2 C = 0,5: 0,782; karakter 2-5 C = 
 | Ulasan campuran | "The peak … lokasi yang sangat baik namun jalan untuk mencapai tempat ini sangat berkelok …" | negatif → positif |
 | Pujian singkat / slang | "Anw indomie pertama di 2018 ku semalam ternyata nikmat" | positif → netral |
 
-Kelas netral paling sulit (F1 0,711): paling sedikit contohnya dan sering berisi kata keluhan tanpa sentimen ("sinyal", "kartu"). Pola negasi dan kontras ("namun", "tapi") adalah alasan utama mengapa encoder kontekstual diharapkan lebih baik; itu belum terbukti sampai fine-tuning dijalankan.
+Kelas netral paling sulit (F1 0,711): paling sedikit contohnya dan sering berisi kata keluhan tanpa sentimen ("sinyal", "kartu").
+
+IndoBERT memperbaiki kedua contoh negasi di atas serta contoh ulasan campuran dan slang. Kesalahannya (37 dari 400) punya pola lain:
+
+| Pola IndoBERT | Contoh (dipotong) | Asli → prediksi |
+|---|---|---|
+| Cerita faktual tentang kejadian buruk (12 kasus netral → negatif) | "Sebuah musibah baru saja menimpa kampung adat di bajawa, flores …" | netral → negatif |
+| Ulasan restoran panjang yang campuran (8 kasus positif → negatif) | "Enak lumayan, tapi harganya mahal karena porsinya sedikit kecil …" | positif → negatif |
+| Keluhan faktual pendek tetap terbaca netral | "Saya kapok menggunakan jasa lion air" | negatif → netral |
+
+28 ulasan salah di kedua model; sebagian labelnya memang ambigu (misalnya cerita kejadian buruk yang dilabeli netral).
 
 ## 2. Topik
 
@@ -67,13 +92,13 @@ Catatan proses: saat eksplorasi saya juga melihat NPMI top-5 dan NPMI pada selur
 | K1 | Dataset berizin, data card, checksum | **Lulus sebagian** | NusaX CC BY-SA 4.0, `docs/kartu-data.md`, SHA-256 di manifest. PRDECT-ID belum bisa diunduh (host diblokir). |
 | K2 | PII scrub teruji + laporan | Lulus | `tests/test_pii.py` (5 tes), `dataset.pii_removed` di results.json |
 | K3 | Baseline TF-IDF, pemilihan tanpa test | Lulus | `baseline.py`, `tests/test_realdata.py::test_test_split_not_used_for_selection`, verify_published |
-| K4 | Encoder Indonesia pra-latih dievaluasi pada test yang sama | **BELUM** | Kode + tes jalur kode (`tests/test_encoder.py`) + notebook Kaggle ada; belum dijalankan karena bobot tidak bisa diunduh |
-| K5 | Macro-F1 + CI, per kelas, confusion untuk kedua model | **Lulus sebagian** | Lengkap untuk TF-IDF dan mayoritas; encoder menunggu K4 |
-| K6 | Uji beda berpasangan TF-IDF vs encoder | **BELUM** | `metrics.paired_comparison` teruji, dipakai untuk TF-IDF vs mayoritas; vs encoder menunggu K4 (`tests/test_encoder.py::test_pipeline_reads_encoder_run` membuktikan jalurnya) |
+| K4 | Encoder Indonesia pra-latih dievaluasi pada test yang sama | Lulus | IndoBERT base p1 di-fine-tune (GitHub Actions run 41083480509), `reports/encoder_run.json`; urutan test_ids dicek sama dengan TF-IDF di `pipeline.py` |
+| K5 | Macro-F1 + CI, per kelas, confusion untuk kedua model | Lulus | Bagian 1; dihitung ulang secara independen oleh `tools/verify_published.py` (2 model) |
+| K6 | Uji beda berpasangan TF-IDF vs encoder | Lulus | +0,127 (CI 0,086 sampai 0,168), McNemar 60 vs 9, p < 0,001; `results.json` bagian `encoder.vs_tfidf` |
 | K7 | Topic model + NPMI + stabilitas 5 seed | Lulus | `topics.py`, `tests/test_topics.py`, tabel di atas |
 | K8 | Analisis kesalahan | Lulus | Bagian 1, halaman Jelajah ulasan (pola kesalahan dapat difilter) |
-| K9 | Reproduksi identik + notebook Kaggle | **Lulus sebagian** | `test_pipeline_reproduces_committed_results_exactly` lulus; notebook ada tetapi belum dijalankan di Kaggle (kaggle.com diblokir dari lingkungan pembuatan) |
-| K10 | Website coral + lilac, model browser teruji paritas, encoder berlabel | Lulus untuk TF-IDF | Svelte 5 + ECharts; `web/tests/model.test.js` paritas 400/400; e2e 134 pemeriksaan lulus (CSP ketat, axe WCAG AA, 320/375/768/1440 px, terang dan gelap) |
+| K9 | Reproduksi identik + notebook Kaggle | **Lulus sebagian** | Evaluasi (termasuk IndoBERT dari `encoder_run.json`) direproduksi byte demi byte oleh `test_pipeline_reproduces_committed_results_exactly`. Fine-tuning dijalankan di GitHub Actions, bukan Kaggle; notebook Kaggle ada tetapi belum dijalankan. Melatih ulang IndoBERT di perangkat lain bisa memberi angka sedikit berbeda. |
+| K10 | Website coral + lilac, model browser teruji paritas, encoder berlabel | Lulus (lokal) | Svelte 5 + ECharts; `web/tests/model.test.js` paritas 400/400; IndoBERT diberi label "hasil precomputed"; e2e 137 pemeriksaan lulus (CSP ketat, axe WCAG AA, 320/375/768/1440 px, terang dan gelap). Situs live belum diverifikasi. |
 | K11 | Model card, README batas klaim, responsif | Lulus | `docs/kartu-model.md`, README, screenshot e2e |
 
-**Kesimpulan: proyek BELUM memenuhi spesifikasi Master.** Inti "TF-IDF vs encoder" baru separuh: encoder belum dijalankan (K4, K6). Website belum dideploy dan belum diverifikasi live.
+**Kesimpulan: inti spesifikasi Master terpenuhi** ("TF-IDF vs encoder; macro-F1, topic consistency, confusion matrix"): kedua model dilatih dan dievaluasi pada test yang sama, dengan uji beda berpasangan. Penyimpangan yang perlu disetujui Shandy: fine-tuning dijalankan di GitHub Actions (CPU), bukan Kaggle (K9 sebagian), dan PRDECT-ID tidak dipakai (K1 sebagian). Proyek belum selesai sampai website dideploy, diverifikasi live, dan disetujui Shandy.

@@ -109,8 +109,14 @@ for (const width of WIDTHS) {
   // Jelajah: filter "salah" sama dengan jumlah kesalahan di data.
   await open(page, 'jelajah');
   const wrong = preds.rows.filter((r) => r.label !== r.tfidf).length;
-  await page.selectOption('select >> nth=2', 'salah');
+  await page.getByLabel('Status').selectOption('salah');
   ok((await page.textContent('.count')).includes(String(wrong)), `jelajah: hitungan salah bukan ${wrong}`);
+  if (results.encoder.status === 'dijalankan') {
+    const wrongEnc = preds.rows.filter((r) => r.label !== r.encoder).length;
+    await page.getByLabel('Model').selectOption('encoder');
+    ok((await page.textContent('.count')).includes(String(wrongEnc)), `jelajah: hitungan salah IndoBERT bukan ${wrongEnc}`);
+    await page.getByLabel('Model').selectOption('tfidf');
+  }
   await page.click('.pair >> nth=0');
   const pairCount = await page.textContent('.pair >> nth=0 >> .strong');
   ok((await page.textContent('.count')).includes(pairCount.trim()), 'jelajah: filter pasangan kesalahan tidak cocok');
@@ -126,6 +132,14 @@ for (const width of WIDTHS) {
   const f1Text = await page.textContent('table tbody tr >> nth=1');
   ok(f1Text.includes(results.tfidf.test.macro_f1.toFixed(3).replace('.', ',')), 'model: macro-F1 TF-IDF tidak tampil');
   if (results.encoder.status !== 'dijalankan') ok(await page.isVisible('tr.pending'), 'model: status encoder belum dijalankan tidak tampil');
+  else {
+    const encRow = await page.textContent('table tbody tr >> nth=2');
+    ok(encRow.includes(results.encoder.test.macro_f1.toFixed(3).replace('.', ',')), 'model: macro-F1 IndoBERT tidak tampil');
+    await page.click('button:has-text("IndoBERT")');
+    const encCells = await page.$$eval('table.sr-only tbody td', (tds) => tds.map((td) => Number(td.textContent)));
+    ok(JSON.stringify(encCells) === JSON.stringify(results.encoder.test.confusion.flat()), 'model: confusion matrix IndoBERT tidak cocok');
+    ok(await page.isVisible('text=p < 0,001') || results.encoder.vs_tfidf.mcnemar.p_value >= 0.001, 'model: p McNemar tidak tampil');
+  }
 
   // Navigasi keyboard pada tab dan tema.
   await page.focus('#tab-model');
