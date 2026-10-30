@@ -1,11 +1,15 @@
 name: Fine-tune IndoBERT
 
-# Dijalankan manual dari tab Actions (Run workflow) pada branch yang ingin diisi hasilnya.
+# Dijalankan manual dari tab Actions (Run workflow, setelah workflow ini ada di main), atau dengan
+# mendorong branch bernama encoder-run/... (bisa dipakai sebelum ada di main).
 # Melatih indobenchmark/indobert-base-p1 di CPU runner GitHub (sekitar 1 jam), lalu meng-commit
 # reports/encoder_run.json ke branch yang sama. Evaluasi, uji beda, dan website diperbarui
 # terpisah dengan `feedbacklab run` supaya tetap bisa direproduksi oleh CI biasa.
 
 on:
+  push:
+    branches: ["encoder-run/**"]
+    paths-ignore: ["reports/encoder_run.json"]
   workflow_dispatch:
     inputs:
       epochs:
@@ -37,7 +41,7 @@ jobs:
         run: feedbacklab data fetch
       - name: Fine-tune 3 seed
         env:
-          EPOCHS: ${{ inputs.epochs }}
+          EPOCHS: ${{ inputs.epochs || '8' }}
         run: |
           [[ "$EPOCHS" =~ ^[0-9]+$ ]] || { echo "epochs harus angka"; exit 1; }
           feedbacklab encoder --epochs "$EPOCHS"
